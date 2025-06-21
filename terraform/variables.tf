@@ -21,3 +21,15 @@ variable "region" {
 variable "account_id" {
   default = "557845476550"
 }
+
+variable "tf_state_bucket_name" {
+  description = "S3 bucket name for Terraform remote state"
+  type        = string
+  default = "games-global-tf-state-lock-bucket"
+}
+
+variable "tf_lock_table_name" {
+  description = "DynamoDB table name for state locking"
+  type        = string
+  default = "games-global-tf-state-lock-dynamo"
+}
