@@ -16,3 +16,14 @@ resource "aws_dynamodb_table" "tf_lock_table" {
     type = "S"
   }
 }
+
+terraform {
+  backend "s3" {
+    bucket         = "games-global-tf-state-lock-bucket"
+    key            = "simple-log-service/terraform.tfstate"
+    region         = "eu-west-1"
+    dynamodb_table = "games-global-tf-state-lock-dynamo"
+    encrypt        = true
+  }
+}
+
