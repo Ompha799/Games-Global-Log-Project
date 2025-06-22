@@ -193,8 +193,5 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_get_log" {
 }
 
 
-# {
-#   "severity": "info",
-#   "message": "Test log entry from API Gateway console"
-# }
+
 
