@@ -31,8 +31,10 @@ terraform {
     bucket         = "games-global-tf-state-lock-bucket"
     key            = "simple-log-service/terraform.tfstate"
     region         = "eu-west-1"
-    dynamodb_table = "games-global-tf-state-lock-dynamo"
+    # dynamodb_table = "games-global-tf-state-lock-dynamo"
     encrypt        = true
+    use_lockfile   = true
+
   }
 }
 
