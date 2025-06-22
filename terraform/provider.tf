@@ -4,6 +4,10 @@ provider "aws" {
 
 resource "aws_s3_bucket" "tf_state_bucket" {
   bucket = var.tf_state_bucket_name
+  
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_dynamodb_table" "tf_lock_table" {
@@ -14,6 +18,10 @@ resource "aws_dynamodb_table" "tf_lock_table" {
   attribute {
     name = "LockID"
     type = "S"
+  }
+  
+  lifecycle {
+    prevent_destroy = true
   }
 }
 
