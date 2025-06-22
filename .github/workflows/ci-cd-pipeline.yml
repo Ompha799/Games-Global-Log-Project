@@ -27,7 +27,7 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         working_directory: ./terraform
-      continue-on-error: true
+      continue-on-error: true  # avoiding errors for now because it is DEV
 
     # Security Check 2: Checkov
     - name: Run Checkov (Terraform & AWS Security Scanner)
@@ -35,7 +35,7 @@ jobs:
       with:
         directory: ./terraform
         framework: terraform
-      continue-on-error: true
+      continue-on-error: true  # avoiding errors for now because it is DEV
 
     - name: Terraform Init
       run: terraform init

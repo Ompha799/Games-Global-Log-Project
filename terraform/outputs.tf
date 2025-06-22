@@ -9,8 +9,3 @@ output "get_logs_function_arn" {
 output "invoke_url" {
   value = "${aws_api_gateway_stage.prod_stage.invoke_url}/log"
 }
-
-output "log_api_key" {
-  value = aws_api_gateway_api_key.log_api_key.value
-  sensitive = true
-}
