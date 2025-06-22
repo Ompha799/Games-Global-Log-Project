@@ -25,6 +25,7 @@ resource "aws_dynamodb_table" "tf_lock_table" {
   }
 }
 
+
 terraform {
   backend "s3" {
     bucket         = "games-global-tf-state-lock-bucket"
