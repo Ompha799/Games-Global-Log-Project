@@ -25,5 +25,22 @@ jobs:
       working-directory: ./terraform
 
     - name: Terraform Destroy
-      run: terraform destroy -auto-approve
+      run: |
+        terraform destroy -auto-approve \
+          -target=aws_iam_role.lambda_exec_role \
+          -target=aws_iam_role_policy_attachment.lambda_dynamodb_access \
+          -target=aws_iam_role_policy_attachment.lambda_basic_execution \
+          -target=aws_lambda_function.get_logs_function \
+          -target=aws_lambda_function.save_log_function \
+          -target=aws_lambda_permission.allow_api_gateway_invoke_get_log \
+          -target=aws_lambda_permission.allow_api_gateway_invoke_save_log \
+          -target=aws_api_gateway_rest_api.log_api \
+          -target=aws_api_gateway_resource.log_resource \
+          -target=aws_api_gateway_method.post_log \
+          -target=aws_api_gateway_method.get_log \
+          -target=aws_api_gateway_integration.get_log_lambda \
+          -target=aws_api_gateway_integration.post_log_lambda \
+          -target=aws_api_gateway_deployment.log_api_deployment \
+          -target=aws_api_gateway_stage.prod_stage \
+          -target=aws_dynamodb_table.log_table
       working-directory: ./terraform
