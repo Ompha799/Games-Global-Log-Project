@@ -37,6 +37,12 @@ jobs:
         framework: terraform
       continue-on-error: true  # avoiding errors for now because it is DEV
 
+     # Create S3 backend bucket if not exists
+    - name: Create S3 backend bucket if not exists
+      run: |
+        aws s3api head-bucket --bucket games-global-tf-state-lock-bucket 2>/dev/null || \
+        aws s3api create-bucket --bucket games-global-tf-state-lock-bucket --create-bucket-configuration LocationConstraint=$AWS_REGION
+
     - name: Terraform Init
       run: terraform init
       working-directory: ./terraform
