@@ -87,6 +87,27 @@ resource "aws_api_gateway_rest_api" "log_api" {
   name        = "LogServiceAPI"
   description = "API for Simple Log Service"
 }
+resource "aws_api_gateway_api_key" "log_api_key" {
+  name    = "LogServiceAPIKey"
+  enabled = true
+}
+
+# Usage Plan
+resource "aws_api_gateway_usage_plan" "log_usage_plan" {
+  name = "LogServiceUsagePlan"
+
+  api_stages {
+    api_id = aws_api_gateway_rest_api.log_api.id
+    stage  = aws_api_gateway_stage.prod_stage.stage_name
+  }
+}
+
+# Link API Key to Usage Plan
+resource "aws_api_gateway_usage_plan_key" "log_usage_plan_key" {
+  key_id        = aws_api_gateway_api_key.log_api_key.id
+  key_type      = "API_KEY"
+  usage_plan_id = aws_api_gateway_usage_plan.log_usage_plan.id
+}
 
 resource "aws_api_gateway_resource" "log_resource" {
   rest_api_id = aws_api_gateway_rest_api.log_api.id
@@ -99,6 +120,7 @@ resource "aws_api_gateway_method" "post_log" {
   resource_id   = aws_api_gateway_resource.log_resource.id
   http_method   = "POST"
   authorization = "NONE"
+  api_key_required = true
 }
 
 resource "aws_api_gateway_method" "get_log" {
@@ -106,6 +128,7 @@ resource "aws_api_gateway_method" "get_log" {
   resource_id   = aws_api_gateway_resource.log_resource.id
   http_method   = "GET"
   authorization = "NONE"
+  api_key_required = true
 }
 
 resource "aws_api_gateway_integration" "post_log_lambda" {
@@ -139,7 +162,6 @@ resource "aws_api_gateway_stage" "prod_stage" {
   deployment_id = aws_api_gateway_deployment.log_api_deployment.id
 }
 
-
 resource "aws_lambda_permission" "allow_api_gateway_invoke_save_log" {
   statement_id  = "AllowAPIGatewayInvokeSaveLog"
   action        = "lambda:InvokeFunction"
@@ -155,7 +177,6 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_get_log" {
   principal     = "apigateway.amazonaws.com"
   source_arn    = "arn:aws:execute-api:${var.region}:${var.account_id}:${aws_api_gateway_rest_api.log_api.id}/*/GET/log"
 }
-
 
 
 
