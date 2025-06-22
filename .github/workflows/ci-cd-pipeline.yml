@@ -25,6 +25,7 @@ jobs:
     - name: Run tfsec (Terraform Security Scanner)
       uses: aquasecurity/tfsec-action@v1.0.3
       with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         working_directory: ./terraform
 
     # Security Check 2: Checkov
