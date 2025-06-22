@@ -1,7 +1,3 @@
-Sure, here is the improved README with **placeholders** instead of hardcoded API keys and URLs. This way, it's clearer for anyone using the project:
-
----
-
 # Simple Log Service
 
 This project provides a basic log service built with AWS Lambda, DynamoDB, API Gateway, and Terraform.
@@ -18,23 +14,12 @@ This project provides a basic log service built with AWS Lambda, DynamoDB, API G
 
 #### 1. Deploy Log Service (Triggered by push to `main`)
 
-* On the first push, **comment out the backend block** in `provider.tf`. This allows Terraform to create the initial state resources in S3 and DynamoDB:
-
-  ```hcl
-  terraform {
-    backend "s3" {
-      bucket         = "your-tf-state-bucket-name"
-      key            = "simple-log-service/terraform.tfstate"
-      region         = "eu-west-1"
-      dynamodb_table = "your-tf-lock-table-name"
-      encrypt        = true
-    }
-  }
-  ```
+* On push pipeline creates an S3 bucket that will be use for state lock.
 
 * GitHub Actions pipeline will then deploy the infrastructure.
 
 * The pipeline also runs **tfsec** and **Checkov** for security checks.
+
   *Note: the pipeline will not fail even if critical vulnerabilities are found.*
 
 #### 2. Destroy Log Service (Triggered Manually)
@@ -49,7 +34,7 @@ This project provides a basic log service built with AWS Lambda, DynamoDB, API G
 To allow GitHub Actions to deploy to AWS, you need to add AWS credentials as secrets:
 
 1. Go to your AWS account and create an IAM User with programmatic access.
-2. Assign the user the necessary permissions (Terraform admin / limited admin for the required resources).
+2. Assign the user the necessary permissions.
 3. In AWS IAM console, note the **AWS\_ACCESS\_KEY\_ID** and **AWS\_SECRET\_ACCESS\_KEY**.
 4. In GitHub:
 
@@ -112,10 +97,8 @@ $response = Invoke-WebRequest `
   -Headers @{ "x-api-key" = "<your-api-key>" } `
   -Method GET
 
-# Parse JSON response
 $logs = $response.Content | ConvertFrom-Json
 
-# Output complete JSON in readable format
 $logs | ConvertTo-Json -Depth 10
 ```
 
