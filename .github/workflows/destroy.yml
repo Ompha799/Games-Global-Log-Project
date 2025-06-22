@@ -42,5 +42,8 @@ jobs:
           -target=aws_api_gateway_integration.post_log_lambda \
           -target=aws_api_gateway_deployment.log_api_deployment \
           -target=aws_api_gateway_stage.prod_stage \
-          -target=aws_dynamodb_table.log_table
+          -target=aws_dynamodb_table.log_table \
+          -target=aws_api_gateway_api_key.log_api_key \
+          -target=aws_api_gateway_usage_plan.log_usage_plan \
+          -target=aws_api_gateway_usage_plan_key.log_usage_plan_key
       working-directory: ./terraform

@@ -22,6 +22,7 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb_access" {
   role       = aws_iam_role.lambda_exec_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 }
+
 resource "aws_dynamodb_table" "log_table" {
   name         = var.log_table_name
   billing_mode = "PAY_PER_REQUEST"
@@ -41,6 +42,7 @@ resource "aws_dynamodb_table" "log_table" {
     enabled = true
   }
 }
+
 data "archive_file" "save_log_zip" {
   type        = "zip"
   source_dir  = "${path.module}/../functions/save_log"
@@ -82,25 +84,36 @@ resource "aws_lambda_function" "get_logs_function" {
     }
   }
 }
-################################api gateway####################################
+
+############################# API Gateway ######################################
+
 resource "aws_api_gateway_rest_api" "log_api" {
   name        = "LogServiceAPI"
   description = "API for Simple Log Service"
 }
+
 resource "aws_api_gateway_api_key" "log_api_key" {
   name    = "LogServiceAPIKey"
   enabled = true
 }
 
-# Usage Plan
+# Usage Plan - create first without stages
 resource "aws_api_gateway_usage_plan" "log_usage_plan" {
   name = "LogServiceUsagePlan"
-
   api_stages {
     api_id = aws_api_gateway_rest_api.log_api.id
     stage  = aws_api_gateway_stage.prod_stage.stage_name
   }
+
+  depends_on = [aws_api_gateway_deployment.log_api_deployment]
 }
+
+# # Attach usage plan to API stage
+# resource "aws_api_gateway_usage_plan_attachment" "log_usage_plan_attachment" {
+#   usage_plan_id = aws_api_gateway_usage_plan.log_usage_plan.id
+#   stage_name    = aws_api_gateway_stage.prod_stage.stage_name
+#   rest_api_id   = aws_api_gateway_rest_api.log_api.id
+# }
 
 # Link API Key to Usage Plan
 resource "aws_api_gateway_usage_plan_key" "log_usage_plan_key" {
@@ -116,18 +129,18 @@ resource "aws_api_gateway_resource" "log_resource" {
 }
 
 resource "aws_api_gateway_method" "post_log" {
-  rest_api_id   = aws_api_gateway_rest_api.log_api.id
-  resource_id   = aws_api_gateway_resource.log_resource.id
-  http_method   = "POST"
-  authorization = "NONE"
+  rest_api_id      = aws_api_gateway_rest_api.log_api.id
+  resource_id      = aws_api_gateway_resource.log_resource.id
+  http_method      = "POST"
+  authorization    = "NONE"
   api_key_required = true
 }
 
 resource "aws_api_gateway_method" "get_log" {
-  rest_api_id   = aws_api_gateway_rest_api.log_api.id
-  resource_id   = aws_api_gateway_resource.log_resource.id
-  http_method   = "GET"
-  authorization = "NONE"
+  rest_api_id      = aws_api_gateway_rest_api.log_api.id
+  resource_id      = aws_api_gateway_resource.log_resource.id
+  http_method      = "GET"
+  authorization    = "NONE"
   api_key_required = true
 }
 
@@ -156,6 +169,7 @@ resource "aws_api_gateway_deployment" "log_api_deployment" {
   ]
   rest_api_id = aws_api_gateway_rest_api.log_api.id
 }
+
 resource "aws_api_gateway_stage" "prod_stage" {
   stage_name    = "prod"
   rest_api_id   = aws_api_gateway_rest_api.log_api.id
@@ -179,5 +193,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_get_log" {
 }
 
 
-
-
+# {
+#   "severity": "info",
+#   "message": "Test log entry from API Gateway console"
+# }

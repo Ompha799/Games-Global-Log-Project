@@ -21,6 +21,19 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
 
+    # Security Check 1: tfsec
+    - name: Run tfsec (Terraform Security Scanner)
+      uses: aquasecurity/tfsec-action@v1.0.3
+      with:
+        working_directory: ./terraform
+
+    # Security Check 2: Checkov
+    - name: Run Checkov (Terraform & AWS Security Scanner)
+      uses: bridgecrewio/checkov-action@v12
+      with:
+        directory: ./terraform
+        framework: terraform
+
     - name: Terraform Init
       run: terraform init
       working-directory: ./terraform
