@@ -1,3 +1,9 @@
+data "aws_caller_identity" "current" {}
+
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+}
+
 resource "aws_iam_role" "lambda_exec_role" {
   name = "LambdaLogServiceRole"
 
@@ -97,7 +103,6 @@ resource "aws_api_gateway_api_key" "log_api_key" {
   enabled = true
 }
 
-# Usage Plan - create first without stages
 resource "aws_api_gateway_usage_plan" "log_usage_plan" {
   name = "LogServiceUsagePlan"
   api_stages {
@@ -107,13 +112,6 @@ resource "aws_api_gateway_usage_plan" "log_usage_plan" {
 
   depends_on = [aws_api_gateway_deployment.log_api_deployment]
 }
-
-# # Attach usage plan to API stage
-# resource "aws_api_gateway_usage_plan_attachment" "log_usage_plan_attachment" {
-#   usage_plan_id = aws_api_gateway_usage_plan.log_usage_plan.id
-#   stage_name    = aws_api_gateway_stage.prod_stage.stage_name
-#   rest_api_id   = aws_api_gateway_rest_api.log_api.id
-# }
 
 # Link API Key to Usage Plan
 resource "aws_api_gateway_usage_plan_key" "log_usage_plan_key" {
@@ -181,7 +179,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_save_log" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.save_log_function.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "arn:aws:execute-api:${var.region}:${var.account_id}:${aws_api_gateway_rest_api.log_api.id}/*/POST/log"
+  source_arn    = "arn:aws:execute-api:${var.region}:${local.account_id}:${aws_api_gateway_rest_api.log_api.id}/*/POST/log"
 }
 
 resource "aws_lambda_permission" "allow_api_gateway_invoke_get_log" {
@@ -189,7 +187,7 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke_get_log" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.get_logs_function.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "arn:aws:execute-api:${var.region}:${var.account_id}:${aws_api_gateway_rest_api.log_api.id}/*/GET/log"
+  source_arn    = "arn:aws:execute-api:${var.region}:${local.account_id}:${aws_api_gateway_rest_api.log_api.id}/*/GET/log"
 }
 
 

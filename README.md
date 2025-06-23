@@ -14,7 +14,7 @@ This project provides a basic log service built with AWS Lambda, DynamoDB, API G
 
 #### 1. Deploy Log Service (Triggered by push to `main`)
 
-* On push pipeline creates an S3 bucket that will be use for state lock.
+* On push pipeline creates an S3 bucket that will be used for state lock.
 
 * GitHub Actions pipeline will then deploy the infrastructure.
 
@@ -25,7 +25,7 @@ This project provides a basic log service built with AWS Lambda, DynamoDB, API G
 #### 2. Destroy Log Service (Triggered Manually)
 
 * This action destroys the infrastructure in the environment.
-* It does not delete the S3 bucket or DynamoDB table used for state locking.
+* It does not delete the S3 bucket used for state locking.
 
 ---
 
@@ -44,6 +44,7 @@ To allow GitHub Actions to deploy to AWS, you need to add AWS credentials as sec
 
      * `AWS_ACCESS_KEY_ID`
      * `AWS_SECRET_ACCESS_KEY`
+     * `AWS_REGION`
 
 GitHub Actions will use these credentials to authenticate and deploy the resources.
 
