@@ -62,6 +62,8 @@ GitHub Actions will use these credentials to authenticate and deploy the resourc
 
 ```json
 {
+  "id": "jku14488hy8784",
+  "datetime": "2025-06-23 15:00:00",
   "severity": "info",
   "message": "Test log entry from API Gateway console"
 }
@@ -77,7 +79,7 @@ Invoke-WebRequest `
     "Content-Type" = "application/json"
   } `
   -Method POST `
-  -Body '{"severity": "info", "message": "Test log entry from PowerShell"}'
+  -Body '{"id": "jku14488hy8784", "datetime": "2025-06-23 15:00:00", "severity": "info", "message": "Test log entry from PowerShell"}'
 ```
 
 ---

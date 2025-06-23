@@ -1,6 +1,4 @@
 import boto3
-import uuid
-from datetime import datetime
 import json
 import os
 
@@ -18,11 +16,11 @@ def lambda_handler(event, context):
         body = json.loads(body_raw)
 
         if 'severity' not in body or 'message' not in body:
-            raise ValueError("Missing 'severity' or 'message' field")
+            raise ValueError("Missing 'id', 'datetime', 'severity' or 'message' field")
 
         log_entry = {
-            'ID': str(uuid.uuid4()),
-            'DateTime': datetime.utcnow().isoformat(),
+            'ID': body['id'],
+            'DateTime': body['datetime'],
             'Severity': body['severity'],
             'Message': body['message']
         }
